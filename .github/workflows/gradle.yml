@@ -23,23 +23,23 @@ jobs:
 
     steps:
     - name: Checkout
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
 
     #Spring Boot 어플리케이션 Build(1)
     - name: Spring Boot Build
-    - run: ./gradlew clean build --exclude-task test
+      run: ./gradlew clean build --exclude-task test
 
     #Docker 이미지 Build(2)
     - name: docker image build
-    - run: docker build -t meanofredstone/portfolio .
+      run: docker build -t meanofredstone/portfolio .
 
     #DockerHub Login(3)
     - name: docker login
-    - uses: docker/login-action@v2
+      uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     #DockerHub Push(4)
     - name: docker Hub push
-    - run: docker push meanofredstone/portfolio
+      run: docker push meanofredstone/portfolio

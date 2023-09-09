@@ -1,0 +1,45 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: portfolio CI with Gradle
+
+# 'master' branch에 push와 pull 이루이지면 작업 진행
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+    - uses: actions/checkout@v3
+
+    #Spring Boot 어플리케이션 Build(1)
+    - name: Spring Boot Build
+      run: ./gradlew clean build --exclude-task test
+
+    #Docker 이미지 Build(2)
+    - name: docker image build
+      run: docker build -t meanofredstone/portfolio .
+
+    #DockerHub Login(3)
+    - name: docker login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    #DockerHub Push(4)
+    - name: docker Hub push
+      run: docker push meanofredstone/portfolio

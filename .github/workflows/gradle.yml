@@ -72,9 +72,9 @@ jobs:
         port: ${{ secrets.EC2_SSH_PORT }}
         timeout: 60s
         script: |
-          sudo docker stop portfolio
-          sudo docker rm portfolio
-          sudo docker run -it -d -p 8080:8080 --name portfolio meanofredstone/portfolio
+          docker stop portfolio
+          docker rm portfolio
+          docker run -it -d -p 8080:8080 --name portfolio meanofredstone/portfolio
 
 #      # REMOVE Github IP FROM security group
 #    - name: Remove IP FROM security group

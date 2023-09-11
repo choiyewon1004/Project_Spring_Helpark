@@ -57,7 +57,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
-    #(7)Add github ip to AWS
+    #(7)Add github ip to AWS-디버깅 부분
     - name: Add GitHub IP to AWS
       run: |
         aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32

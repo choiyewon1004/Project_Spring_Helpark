@@ -64,7 +64,7 @@ jobs:
 
     #(8)AWS EC2 Server Connect & Docker 명령어 실행
     - name: AWS EC2 Connection
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
@@ -72,9 +72,9 @@ jobs:
         port: ${{ secrets.EC2_SSH_PORT }}
         timeout: 60s
         script: |
-          sudo docker stop boot-prac-ci
-          sudo docker rm boot-prac-ci
-          sudo docker run -it -d -p 8080:8080 --name portfolio meanofredstone/portfolio
+          docker stop portfolio
+          docker rm portfolio
+          docker run -it -d -p 8080:8080 --name portfolio meanofredstone/portfolio
 
       # REMOVE Github IP FROM security group
     - name: Remove IP FROM security group

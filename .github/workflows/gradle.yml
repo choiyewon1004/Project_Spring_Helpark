@@ -55,7 +55,7 @@ jobs:
     - name: Make zip file
       run: |
         mkdir deploy
-        cp ./appspec.yml ./deploy/
+        cp ./application.yml ./deploy/
         cp ./Dockerfile ./deploy/
         cp ./scripts/*.sh ./deploy/
         cp ./build/libs/*.jar ./deploy/

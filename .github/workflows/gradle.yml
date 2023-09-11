@@ -64,7 +64,7 @@ jobs:
 
     #(8)AWS EC2 Server Connect & Docker 명령어 실행
     - name: AWS EC2 Connection
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v0.1.4
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu

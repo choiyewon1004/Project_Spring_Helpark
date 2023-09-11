@@ -76,9 +76,9 @@ jobs:
 
     #추가
     - name: Code Deploy
-      run: aws deploy create-deployment --application-name spring-deploy
+      run: aws deploy create-deployment --application-name portfoliocodedeploy
         --deployment-config-name CodeDeployDefault.OneAtATime
-        --deployment-group-name spring-deploy-group
+        --deployment-group-name portfoliocodedeploy
         --s3-location bucket=parkinglot-bucket,bundleType=zip,key=spring-build.zip
 
 

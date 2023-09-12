@@ -63,7 +63,7 @@ jobs:
       run: |
         aws s3 cp \
           --region ap-northeast-2 \
-          ./$GITHUB_SHA.zip s3://parkinglot-bucket//$GITHUB_SHA.zip
+          ./$GITHUB_SHA.zip s3://parkinglot-bucket
 
     #추가_테스트-deploy 확인용 수정
     - name: Code Deploy

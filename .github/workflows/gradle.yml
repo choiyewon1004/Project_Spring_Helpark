@@ -43,3 +43,18 @@ jobs:
     #(4)DockerHub Push
     - name: docker Hub push
       run: docker push meanofredstone/portfolio
+
+    #(8)AWS EC2 Server Connect & Docker 명령어 실행 - 도커 데스크톱 켜놔야함
+    - name: AWS EC2 Connection
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        password: ${{ secrets.EC2_PASSWORD }}
+        port: ${{ secrets.EC2_SSH_PORT }}
+        timeout: 60s
+        script: |
+          docker pull meanofredstone/portfolio
+          docker stop portfolio
+          docker rm portfolio
+          docker run -it -d -p 8080:8080 --name portfolio meanofredstone/portfolio:latest

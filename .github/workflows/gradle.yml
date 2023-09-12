@@ -53,10 +53,12 @@ jobs:
         mkdir deploy
         cp ./appspec.yml ./deploy/
         cp ./scripts/*.sh ./deploy/
+        cp -r ./build ./deploy/
         cp ./build.gradle ./deploy/
         cp ./gradlew ./deploy/
         cp ./bradlew.bat ./deploy/
         cp ./settings.gradle ./deploy/
+        cp -r ./src ./deploy/
         zip -r -qq -j ./spring-build.zip ./deploy
 
     - name: Configure AWS credentials

@@ -5,6 +5,9 @@
     <title>Title</title>
     <!-- jquery 사용 -->
     <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <style>
         .wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
         .wrap * {padding: 0;margin: 0;}
@@ -20,12 +23,43 @@
         .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
         .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
         .info .link {color: #5085BB;}
+
+        .ResponsiveBackground{
+          height: 100vh;
+          width: 100vw;
+          max-width: 1024px;
+          margin: auto auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: center;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .map{
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .current-location{
+            position: absolute;
+            margin-bottom: 10vh;
+            margin-left: 40vw;
+            width: 70px;
+            height: 70px;
+            z-index: 1;
+        }
+
+
     </style>
 </head>
 <body>
-    <h1>ci & cd 동시에 가능?</h1>
-    <button type="button" id="currentLocation">현재 위치</button>
-    <div id="map" style="width:1000px;height:800px;"></div>
+
+    <div class="ResponsiveBackground">
+        <div class="map" id="map"></div>
+        <button class="current-location" type="button" id="currentLocation">현재 위치</button>
+    </div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=010359d956a2e66b66db8df0ccd958d1&libraries=services,clusterer"></script>
     <script>
         var container = document.getElementById('map');

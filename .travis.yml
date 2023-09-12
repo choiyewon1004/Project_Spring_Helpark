@@ -6,7 +6,7 @@ branches:
   only:
     - master
 
-#Travis CI 서버의 Home 푸쉬 확인
+#Travis CI 서버의 Home 푸쉬 확인2
 cache:
   directories:
     - '$HOME/.m2/repository'

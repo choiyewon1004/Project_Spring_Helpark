@@ -52,7 +52,6 @@ jobs:
       run: |
         mkdir deploy
         cp ./application.yml ./deploy/
-#        cp ./Dockerfile ./deploy/
         cp ./scripts/*.sh ./deploy/
         cp ./build/libs/*.jar ./deploy/
         zip -r -qq -j ./spring-build.zip ./deploy

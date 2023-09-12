@@ -69,7 +69,7 @@ jobs:
           --region ap-northeast-2 \
           ./spring-build.zip s3://parkinglot-bucket
 
-    #추가_테스트
+    #추가_테스트-deploy 확인용 수정
     - name: Code Deploy
       run: aws deploy create-deployment --application-name portfoliocodedeploy
         --deployment-config-name CodeDeployDefault.OneAtATime

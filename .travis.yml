@@ -11,6 +11,7 @@ cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.gradle'
+
 script: "./gradlew clean build"
 
 #CI 실행 완료 시 메일로 알람
@@ -18,3 +19,19 @@ notifications:
   email:
     recipients:
       - hongs7701@naver.com
+
+before_deploy:
+  - zip -r portfolio *
+  - mkdir -p deploy
+  - mv portfolio.zip deploy/portfolio.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: parkinglot-bucket
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait-until-deployed: true

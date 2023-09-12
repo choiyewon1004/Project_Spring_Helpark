@@ -49,8 +49,17 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Make zip file
-      run: zip -r ./$GITHUB_SHA.zip .
-      shell: bash
+      run: |
+        mkdir deploy
+        cp ./appspec.yml ./deploy/
+        cp ./scripts/*.sh ./deploy/
+        cp ./build ./deploy/
+        cp ./build.gradle ./deploy/
+        cp ./gradlew ./deploy/
+        cp ./bradlew.bat ./deploy/
+        cp ./settings.gradle ./deploy/
+        cp ./src ./deploy/
+        zip -r -qq -j ./spring-build.zip ./deploy
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -63,11 +72,11 @@ jobs:
       run: |
         aws s3 cp \
           --region ap-northeast-2 \
-          ./$GITHUB_SHA.zip s3://parkinglot-bucket
+          ./spring-build.zip s3://parkinglot-bucket
 
     #추가_테스트-deploy 확인용 수정
     - name: Code Deploy
       run: aws deploy create-deployment --application-name portfoliocodedeploy
         --deployment-config-name CodeDeployDefault.OneAtATime
         --deployment-group-name portfoliocodedeploy
-        --s3-location bucket=parkinglot-bucket,bundleType=zip,key=$GITHUB_SHA.zip
+        --s3-location bucket=parkinglot-bucket,bundleType=zip,key=spring-build.zip

@@ -51,7 +51,7 @@ jobs:
     - name: Make zip file
       run: |
         mkdir deploy
-        cp ./application.yml ./deploy/
+        cp ./appspec.yml ./deploy/
         cp ./scripts/*.sh ./deploy/
         cp ./build/libs/*.jar ./deploy/
         zip -r -qq -j ./spring-build.zip ./deploy

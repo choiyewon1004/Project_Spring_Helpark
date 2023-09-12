@@ -14,12 +14,6 @@ cache:
 
 script: "./gradlew clean build"
 
-#CI 실행 완료 시 메일로 알람
-notifications:
-  email:
-    recipients:
-      - hongs7701@naver.com
-
 before_deploy:
   - zip -r portfolio *
   - mkdir -p deploy
@@ -35,3 +29,20 @@ deploy:
     acl: private
     local_dir: deploy
     wait-until-deployed: true
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: parkinglot-bucket
+    key: portfolio.zip
+    bundle_type: zip
+    application: portfoliocodedeploy
+    deployment_group: portfoliocodedeploy
+    region: ap-northeast-2
+    wait-until-deployed: true
+
+#CI 실행 완료 시 메일로 알람
+notifications:
+  email:
+    recipients:
+      - hongs7701@naver.com

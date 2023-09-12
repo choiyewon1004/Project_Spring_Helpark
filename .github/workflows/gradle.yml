@@ -41,12 +41,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-#    - name: Make application.yml
-#      run: |
-#        touch ./application.yml
-#        echo "${{ secrets.APPLICATION }}" > ./application.yml
-#      shell: bash
-
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
       shell: bash

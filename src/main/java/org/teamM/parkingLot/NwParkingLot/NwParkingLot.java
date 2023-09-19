@@ -1,4 +1,4 @@
-package org.teamM.parkingLot;
+package org.teamM.parkingLot.NwParkingLot;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package org.teamM.parkingLot;
+package org.teamM.parkingLot.NwParkingLot;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

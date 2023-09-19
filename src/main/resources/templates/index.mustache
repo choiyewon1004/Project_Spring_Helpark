@@ -55,8 +55,8 @@
     </style>
 </head>
 <body>
-
     <div class="ResponsiveBackground">
+
         <div class="map" id="map"></div>
         <button class="current-location" type="button" id="currentLocation">현재 위치</button>
     </div>
@@ -123,98 +123,12 @@
         }
 
 
-        // 주차장 정보를 표시하는 객체 배열
-        var parkingLots = [
-            {"tel":"02-2232-6096","parking_type":"NW","lng":127.02425684,"addr":"동대문구 신설동 114-29","holiday_pay_yn":"N","que_status":"1","weekday_begin_time":"0900","time_rate":5,"capacity":79,"cur_parking":51,"sh_co":"","lat":37.57252061,"night_free_open_nm":"야간 미개방","add_time_rate":5,"sh_etc":"","pay_yn":"Y","parking_code":1247636,"rates":260,"weekend_begin_time":"0900","weekday_end_time":"1900","parking_type_nm":"노외 주차장","saturday_pay_yn":"N","operation_rule":"1","bus_add_time_rate":0,"pay_nm":"유료","parking_name":"신설동 공영주차장(시)","weekend_end_time":"1900","day_maximum":null,"sh_link":"","holiday_pay_nm":"무료","saturday_pay_nm":"무료","holiday_end_time":"1900","fulltime_monthly":"","grp_parknm":"","operation_rule_nm":"시간제 주차장","night_free_open":"N","bus_time_rate":0,"holiday_begin_time":"0900"},
-            {"tel":"02-3405-4598","parking_type":"NW","lng":127.066994,"addr":"동대문구 장안동 392-3","holiday_pay_yn":"N","que_status":"1","weekday_begin_time":"0000","time_rate":5,"capacity":74,"cur_parking":44,"sh_co":"","lat":37.56941,"night_free_open_nm":"야간 미개방","add_time_rate":5,"sh_etc":"","pay_yn":"Y","parking_code":1913393,"rates":130,"weekend_begin_time":"0000","weekday_end_time":"2400","parking_type_nm":"노외 주차장","saturday_pay_yn":"N","operation_rule":"1","bus_add_time_rate":0,"pay_nm":"유료","parking_name":"장안1동 공영주차장(시)","weekend_end_time":"2400","day_maximum":0,"sh_link":"","holiday_pay_nm":"무료","saturday_pay_nm":"무료","holiday_end_time":"2400","fulltime_monthly":"90000","grp_parknm":"","operation_rule_nm":"시간제 주차장","night_free_open":"N","bus_time_rate":0,"holiday_begin_time":"0000"},
-            {"tel":"02-2290-6566","parking_type":"NW","lng":126.97588429,"addr":"종로구 세종로 80-1","holiday_pay_yn":"N","que_status":"1","weekday_begin_time":"0000","time_rate":5,"capacity":1260,"cur_parking":306,"sh_co":"","lat":37.57340269,"night_free_open_nm":"야간 미개방","add_time_rate":5,"sh_etc":"","pay_yn":"Y","parking_code":171721,"rates":430,"weekend_begin_time":"0000","weekday_end_time":"2400","parking_type_nm":"노외 주차장","saturday_pay_yn":"N","operation_rule":"1","bus_add_time_rate":0,"pay_nm":"유료","parking_name":"세종로 공영주차장(시)","weekend_end_time":"2400","day_maximum":0,"sh_link":"","holiday_pay_nm":"무료","saturday_pay_nm":"무료","holiday_end_time":"2400","fulltime_monthly":"176000","grp_parknm":"","operation_rule_nm":"시간제 주차장","night_free_open":"N","bus_time_rate":0,"holiday_begin_time":"0000"},
-            {"tel":"02-2290-6166","parking_type":"NW","lng":126.99496888,"addr":"종로구 훈정동 2-0","holiday_pay_yn":"N","que_status":"1","weekday_begin_time":"0000","time_rate":5,"capacity":1317,"cur_parking":427,"sh_co":"","lat":37.57150398,"night_free_open_nm":"야간 미개방","add_time_rate":5,"sh_etc":"","pay_yn":"Y","parking_code":171730,"rates":400,"weekend_begin_time":"0000","weekday_end_time":"2400","parking_type_nm":"노외 주차장","saturday_pay_yn":"N","operation_rule":"1","bus_add_time_rate":0,"pay_nm":"유료","parking_name":"종묘주차장 공영주차장(시)","weekend_end_time":"2400","day_maximum":0,"sh_link":"","holiday_pay_nm":"무료","saturday_pay_nm":"무료","holiday_end_time":"2400","fulltime_monthly":"175000","grp_parknm":"","operation_rule_nm":"시간제 주차장","night_free_open":"N","bus_time_rate":0,"holiday_begin_time":"0000"},
-            {"tel":"02-2264-4895","parking_type":"NW","lng":126.97418586,"addr":"종로구 적선동 140-0","holiday_pay_yn":"N","que_status":"1","weekday_begin_time":"0900","time_rate":120,"capacity":28,"cur_parking":20,"sh_co":"","lat":37.57449014,"night_free_open_nm":"야간 미개방","add_time_rate":5,"sh_etc":"","pay_yn":"Y","parking_code":1367264,"rates":8100,"weekend_begin_time":"0900","weekday_end_time":"1900","parking_type_nm":"노외 주차장","saturday_pay_yn":"N","operation_rule":"4","bus_add_time_rate":5,"pay_nm":"유료","parking_name":"적선동 주차장(시)","weekend_end_time":"1900","day_maximum":0,"sh_link":"","holiday_pay_nm":"무료","saturday_pay_nm":"무료","holiday_end_time":"1900","fulltime_monthly":"0","grp_parknm":"","operation_rule_nm":"버스전용 주차장","night_free_open":"N","bus_time_rate":120,"holiday_begin_time":"0900"},
-
-        ];
-
-        //카카오 api 라이브러리에 맞는 내용을 담아줄 배열 선언
-        let plPositions = [];
-
-        //위의 parkingLots에서 필요한 정보를 plPositions에 담아준다.
-        for(var i = 0; i < parkingLots.length; i++){
-            // 커스텀 오버레이에 표시할 컨텐츠
-            var content = '<div class="wrap">' +
-                        '    <div class="info">' +
-                        '        <div class="title">' +
-                                    parkingLots[i].parking_name +
-                        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
-                        '        </div>' +
-                        '        <div class="body">' +
-                        '            <div class="img">' +
-                        '                <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70">' +
-                        '           </div>' +
-                        '            <div class="desc">' +
-                        '                <div class="ellipsis">' + parkingLots[i].addr +'</div>' +
-                        '            </div>' +
-                        '        </div>' +
-                        '    </div>' +
-                        '</div>';
-            var data = {parking_code : parkingLots[i].parking_code,
-                        latlng: new kakao.maps.LatLng(parkingLots[i].lat, parkingLots[i].lng),
-                        addr: parkingLots[i].addr,
-                        parking_name: parkingLots[i].parking_name,
-                        content: content
-                        }
-            plPositions.push(data);
-        }
-
-        var content = '<div class="wrap">' +
-                        '    <div class="info">' +
-                        '        <div class="title">' +
-                                    parkingLots[0].parking_name +
-                        '            <div class="close" onclick="closeOverlay()" title="닫기"></div>' +
-                        '        </div>' +
-                        '        <div class="body">' +
-                        '            <div class="img">' +
-                        '                <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70">' +
-                        '           </div>' +
-                        '            <div class="desc">' +
-                        '                <div class="ellipsis">' + parkingLots[0].addr +'</div>' +
-                        '            </div>' +
-                        '        </div>' +
-                        '    </div>' +
-                        '</div>';
-
-        //plPositions에 담긴 내용르 바탕으로 마커 생성
-        for (var i = 0; i < plPositions.length; i ++) {
-            var marker = new kakao.maps.Marker({
+        {{#NwParkingLot}}
+        var marker = new kakao.maps.Marker({
                 map: map,
-                position: plPositions[i].latlng
-            });
-            // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
-            kakao.maps.event.addListener(marker, 'click', function() {
-                // 마커 위에 커스텀오버레이를 표시합니다
-                // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-                var overlay = new kakao.maps.CustomOverlay({
-                    content: content,
-                    map: map,
-                    position: marker.getPosition()
-                });
-                overlay.setMap(map);
-            });
-
-            // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
-            function closeOverlay() {
-                overlay.setMap(null);
-            }
-
-        }
-
-
-
-
-
-
-
-
-
-
+                position: new kakao.maps.LatLng({{lat}}, {{lng}})
+        })
+        {{/NwParkingLot}}
     </script>
 </body>
 </html>

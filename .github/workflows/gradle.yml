@@ -10,9 +10,9 @@ name: portfolio CI/CD with Gradle
 # 'master' branch에 push와 pull 이루이지면 작업 진행
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "Final" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "Final" ]
 
 permissions:
   contents: read
@@ -27,7 +27,7 @@ jobs:
 
     #(1)Spring Boot 어플리케이션 Build
     - name: Spring Boot Build
-      run: ./gradlew clean build -x test
+      run: ./gradlew clean build
 
     #(2)Docker 이미지 Build
     - name: docker image build

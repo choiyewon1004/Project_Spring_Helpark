@@ -18,7 +18,7 @@ public class NwParkingLot {
 
     @Id // 해당 테이블의 PK 필드를 나타냄
     @GeneratedValue(strategy = GenerationType.IDENTITY)//PK 생성 규칙
-    private String parking_code;
+    private Long id;
 
     //테이블의 칼럼을 나타내며 굳이 선언하지 않더라도 해당 클래스의 필드는 모두 칼럼이 됩니다. 기본값 외에 추가로 변경할 경우 사용한다.
     @Column(length=50, nullable = false)

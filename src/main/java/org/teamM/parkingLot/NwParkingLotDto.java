@@ -16,14 +16,14 @@ Dto는 Entity 필드 중 일부만 사용하므로 생성자로 Entity를 받아
 @NoArgsConstructor
 public class NwParkingLotDto {
     //DTO에서 사용할 필드(엔티티에서 불러오는 것)
-    private String parking_code;
+    private Long id;
     private String parking_name;
     private String lat;
     private String lng;
 
     //엔티티에서 필드값을 불러옴
     public NwParkingLotDto(NwParkingLot entity) {
-        this.parking_code = entity.getParking_code();
+        this.id = entity.getId();
         this.parking_name = entity.getParking_name();
         this. lat = entity.getLat();
         this.lng = entity.getLng();

@@ -6,6 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.teamM.parkingLot.NwParkingLot.NwParkingLotService;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @RequiredArgsConstructor
 @Controller
 public class ParkingLotController {
@@ -27,9 +30,29 @@ public class ParkingLotController {
 
     private final NwParkingLotService nwParkingLotService;
 
+    public Integer getTime(){
+        //현재시간
+        LocalTime now = LocalTime.now();
+        // 포맷 정의하기
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
+        // 포맷 적용하기
+        String formatedNow = now.format(formatter);
+        int timeNow = Integer.parseInt(formatedNow);
+
+        return timeNow;
+    }
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("NwParkingLot", nwParkingLotService.findAll());
+
+        int startTime = getTime();
+        int endTime = startTime;
+
+        if(startTime < 500){
+            endTime = startTime + 2400;
+        }
+
+        model.addAttribute("Open", nwParkingLotService.findOpenNwParkingLot(startTime, endTime));
+        model.addAttribute("Close", nwParkingLotService.findCloseNwParkingLot(startTime, endTime));
         return "index";
     }
 }

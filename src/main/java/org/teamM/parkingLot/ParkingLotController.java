@@ -41,6 +41,8 @@ public class ParkingLotController {
 
         return timeNow;
     }
+
+
     @GetMapping("/")
     public String index(Model model) {
 
@@ -53,6 +55,8 @@ public class ParkingLotController {
 
         model.addAttribute("Open", nwParkingLotService.findOpenNwParkingLot(startTime, endTime));
         model.addAttribute("Close", nwParkingLotService.findCloseNwParkingLot(startTime, endTime));
+
+
         return "index";
     }
 }

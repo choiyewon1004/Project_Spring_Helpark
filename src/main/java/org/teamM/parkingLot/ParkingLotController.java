@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.teamM.parkingLot.NwParkingLot.NwParkingLotService;
 
-import java.util.List;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
 @Controller
@@ -29,9 +30,36 @@ public class ParkingLotController {
 
     private final NwParkingLotService nwParkingLotService;
 
+    public Integer getTime(){
+        //현재시간
+        LocalTime now = LocalTime.now();
+        // 포맷 정의하기
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
+        // 포맷 적용하기
+        String formatedNow = now.format(formatter);
+        int timeNow = Integer.parseInt(formatedNow);
+
+        return timeNow;
+    }
+
     @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("NwParkingLot", nwParkingLotService.findAll());
+    public String index(){
         return "index";
+    }
+
+    @GetMapping("/map")
+    public String map(Model model) {
+        int startTime = getTime();
+        int endTime = startTime;
+
+        if(startTime < 500){
+            endTime = startTime + 2400;
+        }
+
+        model.addAttribute("Open", nwParkingLotService.findOpenNwParkingLot(startTime, endTime));
+        model.addAttribute("Close", nwParkingLotService.findCloseNwParkingLot(startTime, endTime));
+
+
+        return "map";
     }
 }

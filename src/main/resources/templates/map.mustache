@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Title</title>
+    <!-- jquery 사용 -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+        .wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+        .wrap * {padding: 0;margin: 0;}
+        .wrap .info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+        .wrap .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+        .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
+        .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
+        .info .close:hover {cursor: pointer;}
+        .info .body {position: relative;overflow: hidden;}
+        .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
+        .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+        .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
+        .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
+        .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+        .info .link {color: #5085BB;}
+
+        .ResponsiveBackground{
+          height: 100vh;
+          width: 100vw;
+          max-width: 1024px;
+          margin: auto auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: center;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .map{
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .current-location{
+            position: absolute;
+            margin-bottom: 10vh;
+            margin-left: 40vw;
+            width: 70px;
+            height: 70px;
+            z-index: 1;
+        }
+
+        .search{
+            margin-top: 8vh;
+            justify-content: center;
+            display:flex;
+            flex-direction: row;
+            width: 80%;
+            height: 4%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            z-index: 2;
+         }
+
+        .search > input {
+            width: inherit;
+            border-radius: 10px;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        .search > button {
+            margin-left: 2vw;
+            border-radius: 10px;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        .quick{
+            position: absolute;
+            margin-top: 5vh;
+            width: 50px;
+            z-index: 2;
+            border-color: transparent;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=010359d956a2e66b66db8df0ccd958d1&libraries=services,clusterer"></script>
+        <div class="ResponsiveBackground">
+            <div class="map" id="map" >
+                <div class="search">
+                    <input type="text">
+                    <button>검색</button>
+                    <button class="quick" id="search1_click">노외</button>
+                </div>
+            </div>
+            <button class="current-location" type="button" id="currentLocation">현재 위치</button>
+        </div>
+
+    <script>
+        var open_positions=[];
+        var close_positions=[];
+    </script>
+
+    {{#Open}}
+        <script>
+            var open_position = {
+                title: "{{id}}",
+                content : '<div>{{id}}</div><div>{{parking_name}}</div>',
+                latlng: new kakao.maps.LatLng({{lat}}, {{lng}}),
+            }
+            open_positions.push(open_position);
+        </script>
+    {{/Open}}
+
+    {{#Close}}
+        <script>
+            console.log({{lat}}, {{lng}});
+            var close_position = {
+                title: "{{id}}",
+                content : '<div>{{id}}</div><div>{{parking_name}}</div><div>{{weekdayEndTime}}</div>',
+                latlng: new kakao.maps.LatLng({{lat}}, {{lng}}),
+            }
+            close_positions.push(close_position);
+        </script>
+    {{/Close}}
+
+</body>
+</html>
+
+<script>
+    var check_click =0
+    var container = document.getElementById('map');
+    var options = {
+        center: new kakao.maps.LatLng(37.5666612, 126.9783785),
+        level: 8
+    };
+
+    var map = new kakao.maps.Map(container, options);
+    var markers = [];
+
+    // 현재 위치 버튼 실행시 작동
+    $('#currentLocation').click(function () {
+        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+        if (navigator.geolocation) {
+            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+            navigator.geolocation.getCurrentPosition(function(position) {
+
+                var lat = position.coords.latitude, // 위도
+                    lon = position.coords.longitude; // 경도
+
+                var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                    message = '<div style="padding:5px;">현재 위치</div>'; // 인포윈도우에 표시될 내용입니다
+
+                // 마커와 인포윈도우를 표시합니다
+                displayMarker(locPosition, message);
+
+                // 마커 좌표를 접속위치로 변경합니다
+                map.setCenter(locPosition);
+              });
+
+        } else {
+            // HTML5의 GeoLocation을 사용할 수 없을때
+        }
+    });
+
+    $('#search1_click').click(function(){
+        if(check_click ==0){
+            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+            imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+            imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+            //open 마커 띄우기
+            for(var i=0;i<open_positions.length;i++){
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: open_positions[i].latlng,
+                    title: open_positions[i].title
+                });
+                markers.push(marker);
+
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: open_positions[i].content
+                });
+
+                (function(marker, infowindow){
+                    kakao.maps.event.addListener(marker,'click',function(){
+                        infowindow.open(map,marker);
+                    });
+
+                    kakao.maps.event.addListener(map,'click',function(){
+                        infowindow.close();
+                    });
+                })(marker, infowindow);
+            }
+
+
+            // close 마커 띄우기
+            for(var i=0;i<close_positions.length;i++){
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    title:close_positions[i].title,
+                    position:close_positions[i].latlng,
+                    image: markerImage
+                });
+                markers.push(marker);
+
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: close_positions[i].content
+                });
+
+                (function(marker, infowindow){
+                    kakao.maps.event.addListener(marker,'click',function(){
+                        infowindow.open(map,marker);
+                    });
+
+                    kakao.maps.event.addListener(map,'click',function(){
+                        infowindow.close();
+                    });
+                })(marker, infowindow);
+            }
+            check_click =1;
+        }else{
+           for(var i=0;i<markers.length;i++){
+                markers[i].setMap(null)
+           }
+           check_click =0;
+
+        }
+    })
+
+    function displayMarker(locPosition, message) {
+
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: locPosition
+        });
+
+        var iwContent = message, // 인포윈도우에 표시할 내용
+            iwRemoveable = true;
+
+        // 인포윈도우를 생성합니다
+        var infowindow = new kakao.maps.InfoWindow({
+            content : iwContent,
+            removable : iwRemoveable
+        });
+
+        // 인포윈도우를 마커위에 표시합니다
+        infowindow.open(map, marker);
+
+        // 지도 중심좌표를 접속위치로 변경합니다
+        map.setCenter(locPosition);
+    }
+
+
+
+
+
+</script>
+

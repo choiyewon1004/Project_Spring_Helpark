@@ -25,15 +25,16 @@
         .info .link {color: #5085BB;}
 
         .ResponsiveBackground{
-          height: 100vh;
-          width: 100vw;
-          max-width: 1024px;
-          margin: auto auto;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: center;
-          font-family: 'Noto Sans KR', sans-serif;
+        height: 100vh;
+        width: 100vw;
+        max-width: 1024px;
+        margin: auto auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: rgb(56, 182, 255);
         }
 
         .map{
@@ -51,84 +52,31 @@
             z-index: 1;
         }
 
+        .ResponsiveBackground > img {
+            margin-bottom: auto;
+            margin-top: auto;
+            width: 38%;
+        }
 
+        .ResponsiveBackground > button {
+            margin-bottom: 20vh;
+            width: 20%;
+            height: 5%;
+            background-color: white;
+            border-color: transparent;
+            border-radius: 10px;
+            position: absolute;
+            font-weight: 550;
+            font-size: 25px;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
-    <div class="ResponsiveBackground">
+<div class="ResponsiveBackground">
+    <img src="images/helpark.png" />
+    <button type="button"  onclick="location.href='../map'">시작하기</button>
+</div>
 
-        <div class="map" id="map"></div>
-        <button class="current-location" type="button" id="currentLocation">현재 위치</button>
-    </div>
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=010359d956a2e66b66db8df0ccd958d1&libraries=services,clusterer"></script>
-    <script>
-        var container = document.getElementById('map');
-        var options = {
-            center: new kakao.maps.LatLng(37.5666612, 126.9783785),
-            level: 8
-        };
-
-        var map = new kakao.maps.Map(container, options);
-
-
-        // 현재 위치 버튼 실행시 작동
-        $('#currentLocation').click(function () {
-            // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
-            if (navigator.geolocation) {
-                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-                navigator.geolocation.getCurrentPosition(function(position) {
-
-                    var lat = position.coords.latitude, // 위도
-                        lon = position.coords.longitude; // 경도
-
-                    var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                        message = '<div style="padding:5px;">현재 위치</div>'; // 인포윈도우에 표시될 내용입니다
-
-                    // 마커와 인포윈도우를 표시합니다
-                    displayMarker(locPosition, message);
-
-                    // 마커 좌표를 접속위치로 변경합니다
-                    map.setCenter(locPosition);
-                  });
-
-            } else {
-                // HTML5의 GeoLocation을 사용할 수 없을때
-            }
-        });
-
-
-        // 현재 위치 버튼 작동 시 지도에 마커와 인포윈도우를 표시하는 함수입니다
-        function displayMarker(locPosition, message) {
-
-            // 마커를 생성합니다
-            var marker = new kakao.maps.Marker({
-                map: map,
-                position: locPosition
-            });
-
-            var iwContent = message, // 인포윈도우에 표시할 내용
-                iwRemoveable = true;
-
-            // 인포윈도우를 생성합니다
-            var infowindow = new kakao.maps.InfoWindow({
-                content : iwContent,
-                removable : iwRemoveable
-            });
-
-            // 인포윈도우를 마커위에 표시합니다
-            infowindow.open(map, marker);
-
-            // 지도 중심좌표를 접속위치로 변경합니다
-            map.setCenter(locPosition);
-        }
-
-
-        {{#NwParkingLot}}
-        var marker = new kakao.maps.Marker({
-                map: map,
-                position: new kakao.maps.LatLng({{lat}}, {{lng}})
-        })
-        {{/NwParkingLot}}
-    </script>
 </body>
 </html>

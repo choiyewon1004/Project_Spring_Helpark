@@ -1,4 +1,4 @@
-package org.teamM.parkingLot;
+package org.teamM.parkingLot.NwParkingLot;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +26,15 @@ public class NwParkingLot {
 
     private String parking_name;
 
-    private String lat;
+    private Double lat;
 
-    private String lng;
+    private Double lng;
+
+    private Integer weekdayBeginTime;
+
+    private Integer weekdayEndTime;
+
+    private Integer weekendBeginTime;
+
+    private Integer weekendEndTime;
 }

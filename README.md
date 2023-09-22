@@ -51,14 +51,15 @@
   - 도커
   
   (3) IDE
-  - IntelliJ <br>
+  - IntelliJ
+  - Android Studio<br>
 
   (4) 활용데이터
   - 서울시 시영주차장 실시간 주차대수 정보
 
   (5) 제작 배경
   - **Spring Boot , GitHub Actions, AWS EC2 | RDS, Docker, Flutter 를 활용한 풀 사이클 개발을 위해**
-  - **앱으로 출시하여 실제 사용을 통해 트래픽 관리를 위해**
+  - **Android Studio를 통해 웹을 웹뷰로 감싼 후 출시하여 실제 사용을 통해 트래픽 관리를 위해**
   - **추후 사용 결과를 통해 추가적인 기능을 만들며 지속적인 애플리케이션 관리를 위해**
 <br/>
 

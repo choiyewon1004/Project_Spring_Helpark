@@ -37,4 +37,9 @@ public class NwParkingLot {
     private Integer weekendBeginTime;
 
     private Integer weekendEndTime;
+
+    @Column(name="rates")
+    private Integer rates;
+
+    private Integer capacity;
 }

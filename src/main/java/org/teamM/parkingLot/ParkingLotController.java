@@ -3,11 +3,15 @@ package org.teamM.parkingLot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
+import org.teamM.Watch.Watch;
+import org.teamM.parkingLot.CurParking.CallAPI;
 import org.teamM.parkingLot.NwParkingLot.NwParkingLotService;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
 
 @RequiredArgsConstructor
 @Controller
@@ -29,18 +33,8 @@ public class ParkingLotController {
      */
 
     private final NwParkingLotService nwParkingLotService;
-
-    public Integer getTime(){
-        //현재시간
-        LocalTime now = LocalTime.now();
-        // 포맷 정의하기
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HHmm");
-        // 포맷 적용하기
-        String formatedNow = now.format(formatter);
-        int timeNow = Integer.parseInt(formatedNow);
-
-        return timeNow;
-    }
+    public static Watch watch = new Watch();
+    public static CallAPI callAPI = new CallAPI();
 
     @GetMapping("/")
     public String index(){
@@ -49,7 +43,7 @@ public class ParkingLotController {
 
     @GetMapping("/map")
     public String map(Model model) {
-        int startTime = getTime();
+        int startTime = watch.getTime();
         int endTime = startTime;
 
         if(startTime < 500){
@@ -62,4 +56,21 @@ public class ParkingLotController {
 
         return "map";
     }
+
+    @RequestMapping(value = "/available", method = {RequestMethod.POST})
+    @ResponseBody
+    public String available(@RequestParam("keyName") String keyName, @RequestParam("keyAddr") String keyAddr ) throws IOException {
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>백 작동");
+        String district = keyAddr.split(" ")[0];
+        System.out.println(district);
+        System.out.println(keyName);
+
+        String curParking = callAPI.getCurParking(keyAddr, keyName);
+        //return과 관련된 부분
+        System.out.println(curParking);
+
+        return curParking;
+    }
+
+
 }

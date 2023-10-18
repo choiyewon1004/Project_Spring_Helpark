@@ -1,4 +1,6 @@
 package org.teamM.parkingLot.NwParkingLot;
+import org.teamM.Watch.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,22 +29,7 @@ public class NwParkingLotService {
      */
 //    @Autowired
     private final NwParkingLotRepository NwParkingLotRepository;
-
-    //요일 구하는 함수 월:1 ~ 일:7
-    public Integer getDate(){
-        // 1. LocalDate 생성
-        LocalDate date = LocalDate.now();
-
-        // 2. DayOfWeek 객체 구하기
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-
-        // 3. 숫자 요일 구하기
-        int dayOfWeekNumber = dayOfWeek.getValue();
-
-        return dayOfWeekNumber;
-    }
-
-
+    public static Watch watch = new Watch();
 
 
     /*
@@ -52,7 +39,7 @@ public class NwParkingLotService {
 
     @Transactional(readOnly = true)
     public List<NwParkingLot> findOpenNwParkingLot(int time1, int time2) {
-        int date = getDate();
+        int date = watch.getDate();
         if(date == 6 || date == 7) {
             System.out.println("Open 주말 작동");
             return NwParkingLotRepository.findByWeekendBeginTimeLessThanAndWeekendEndTimeGreaterThan(time1, time2);
@@ -65,7 +52,7 @@ public class NwParkingLotService {
 
     @Transactional(readOnly = true)
     public List<NwParkingLot> findCloseNwParkingLot(int time1, int time2){
-        int date = getDate();
+        int date = watch.getDate();
         if(date == 6 || date == 7){
             System.out.println("Close 주말 작동");
             return NwParkingLotRepository.findByWeekendBeginTimeGreaterThanOrWeekendEndTimeLessThan(time1, time2);

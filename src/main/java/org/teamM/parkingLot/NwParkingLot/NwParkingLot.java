@@ -41,5 +41,11 @@ public class NwParkingLot {
     @Column(name="rates")
     private Integer rates;
 
+    private Integer time_rate;
+
+    private Integer add_rates;
+
+    private Integer add_time_rate;
+
     private Integer capacity;
 }

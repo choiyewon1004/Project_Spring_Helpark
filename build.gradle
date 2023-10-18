@@ -33,5 +33,5 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'mysql:mysql-connector-java'
-    //Spring data JPA - querydsl 섞을 경우
+    compile group: 'com.hynnet', name: 'json-lib', version: '2.4'
 }

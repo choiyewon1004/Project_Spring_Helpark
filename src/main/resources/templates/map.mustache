@@ -89,6 +89,11 @@
             border-color: transparent;
             box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
         }
+
+        .desc{
+            margin-left : 8px !important;
+        }
+
     </style>
 
 
@@ -114,9 +119,8 @@
 
     {{#Open}}
         <script>
-<!--            rates capacity 널값때문에 뺌-->
             var open_position = {
-                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}
+                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}, rates :{{rates}}, capacity: {{capacity}} , timeRate : {{time_rate}}, addRates : {{add_rates}}, addTimeRate : {{add_time_rate}}
             }
             open_positions.push(open_position);
         </script>
@@ -124,9 +128,8 @@
 
     {{#Close}}
         <script>
-            <!--            rates capacity 널값때문에 뺌-->
             var close_position = {
-                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}
+                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}, rates :{{rates}}, capacity: {{capacity}} , timeRate : {{time_rate}}, addRates : {{add_rates}}, addTimeRate : {{add_time_rate}}
             }
             close_positions.push(close_position);
         </script>
@@ -145,6 +148,7 @@
 
     var map = new kakao.maps.Map(container, options);
     var markers = [];
+    //ajax에 선택한 주차장의 주소와 주차장명을 보내기위한 배열
 
     // 현재 위치 버튼 실행시 작동
     $('#currentLocation').click(function () {
@@ -205,6 +209,18 @@
         }
     })
 
+    let keyName;
+    let keyAddr;
+
+    let ajaxAddr;
+    let ajaxBeginTime;
+    let ajaxEndTime;
+    let ajaxRates;
+    let ajaxTimeRate;
+    let ajaxCapacity;
+    let ajaxAddRates;
+    let ajaxAddRateTime;
+
     // 지도에 마커를 표시하는 함수입니다
     function displayMarker(data) {
         var marker = new kakao.maps.Marker({
@@ -246,17 +262,17 @@
         bodyDiv.classList.add("body");
         infoDiv.appendChild(bodyDiv);
 
-        //imgDiv -> bodyDiv 안에 존재
-        var imgDiv = document.createElement("div");
-        imgDiv.classList.add("img");
-        bodyDiv.appendChild(imgDiv);
+<!--        //imgDiv -> bodyDiv 안에 존재-->
+<!--        var imgDiv = document.createElement("div");-->
+<!--        imgDiv.classList.add("img");-->
+<!--        bodyDiv.appendChild(imgDiv);-->
 
-        //img -> imgDiv 안에 존재
-        var image = document.createElement("img");
-        image.setAttribute("src", "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png");
-        image.setAttribute("width", "73");
-        image.setAttribute("height", "70");
-        imgDiv.appendChild(image);
+<!--        //img -> imgDiv 안에 존재-->
+<!--        var image = document.createElement("img");-->
+<!--        image.setAttribute("src", "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png");-->
+<!--        image.setAttribute("width", "73");-->
+<!--        image.setAttribute("height", "70");-->
+<!--        imgDiv.appendChild(image);-->
 
 
         //descDiv -> bodyDiv 안에 존재
@@ -277,12 +293,13 @@
 
         var ellipsisRate = document.createElement("div");
         ellipsisRate.classList.add("ellipsis");
-        ellipsisRate.innerHTML = "주차 요금 : 기본" + data.rates + "원(xx분) 추가(xx원 xx분당)";
+        ellipsisRate.innerHTML = "기본 요금: " + data.rates + " 원( " +data.timeRate + " 분) 추가( " + data.addRates + " 원 " + data.addTimeRate + " 분당)";
         descDiv.appendChild(ellipsisRate);
+
 
         var ellipsisCapacity = document.createElement("div");
         ellipsisCapacity.classList.add("ellipsis");
-        ellipsisCapacity.innerHTML = "주차 공간 : xx대 가능(총" + data.capacity + ")";
+        ellipsisCapacity.innerHTML = "주차 공간 : 00대 가능( 총 " + data.capacity + " 대)";
         descDiv.appendChild(ellipsisCapacity);
 
 
@@ -290,7 +307,44 @@
 
         kakao.maps.event.addListener(marker, 'click', function() {
             overlay.setMap(map);
+            keyName = String(titleDiv.innerHTML.slice(0,-28));
+            keyAddr = String(ellipsisAddr.innerHTML);
+            ajaxAddr = keyAddr;
+            var capacity = String(ellipsisCapacity.innerHTML).split(" ");
+            ajaxCapacity = capacity[6];
+            var rate = String(ellipsisRate.innerHTML).split(" ");
+            ajaxRates = rate[2];
+            ajaxTimeRate = rate[4];
+            ajaxAddRates = rate[7];
+            ajaxAddTimeRate = rate[9];
+            var Time = String(ellipsisTime.innerHTML).split(" ");
+            ajaxBegintTime = Time[2];
+            ajaxEndTime = Time[4];
+            setInterval(parkingLotUpdate(), 1200000);
         });
+    }
+
+    function parkingLotUpdate () {
+        $.ajax({
+            url: '../available/' ,
+            data: {
+                keyName : keyName,
+                keyAddr : keyAddr
+            },
+            dataType : 'json',
+            type: "POST" ,
+            success : function(curParking) {
+                alert("백 반환");
+                var txt = '';
+                $('.desc').empty();
+                txt += "<div class='ellipsis'>"+ajaxAddr+"</div>"
+                txt += "<div class='ellipsis'>영업시간 : " +ajaxBegintTime+" ~ " +ajaxEndTime+"</div>"
+                txt += "<div class='ellipsis'>기본 요금: " + ajaxRates + " 원( " + ajaxTimeRate + " 분) 추가( " + ajaxAddRates + " 원 " + ajaxAddTimeRate + " 분당)</div>"
+                txt += "<div class='ellipsis'>주차 공간 : " + curParking +"대 가능(총 " + ajaxCapacity +"대)</div>"
+                $('.desc').html(txt);
+
+            }
+		})
     }
 </script>
 

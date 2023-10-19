@@ -22,19 +22,19 @@ public interface NsParkingLotRepository extends JpaRepository<NsParkingLot, Stri
 
 
     //반경 주차장 불러오기 - 주중 영업시간
-    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM NS_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel )AND((weekday_begin_time < :now_time)AND(:now_time < weekday_end_time))" ,nativeQuery = true)
+    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM ns_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel )AND((weekday_begin_time < :now_time)AND(:now_time < weekday_end_time))" ,nativeQuery = true)
     List<NsParkingLot> findByRadiusWeekdayOpen(@Param("longitude") BigDecimal longitude, @Param("latitude") BigDecimal latitude, @Param("distanceLevel") int distanceLevel , @Param("now_time") int now_time);
 
     //반경 주차장 불러오기 - 주중 영업시간 아닌 주차장
-    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM NS_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekday_begin_time > :now_time)OR(:now_time > weekday_end_time))" ,nativeQuery = true)
+    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM ns_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekday_begin_time > :now_time)OR(:now_time > weekday_end_time))" ,nativeQuery = true)
     List<NsParkingLot> findByRadiusWeekdayClose(@Param("longitude")BigDecimal longitude, @Param("latitude") BigDecimal latitude, @Param("distanceLevel") int distanceLevel , @Param("now_time") int now_time);
 
     //반경 주차장 불러오기 - 주말 영업시간
-    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM NS_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekend_begin_time < :now_time)AND(:now_time < weekend_end_time))" ,nativeQuery = true)
+    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM ns_parking_lot WHERE (ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekend_begin_time < :now_time)AND(:now_time < weekend_end_time))" ,nativeQuery = true)
     List<NsParkingLot> findByRadiusWeekendOpen(@Param("longitude")BigDecimal longitude, @Param("latitude") BigDecimal latitude, @Param("distanceLevel") int distanceLevel , @Param("now_time") int now_time);
 
     //반경 주차장 불러오기 - 주말 영업시간 아닌 주차장
-    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM NS_parking_lot WHERE (ST_Distance_Sphere(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekend_begin_time > :now_time)OR(:now_time > weekend_end_time))" ,nativeQuery = true)
+    @Query(value ="SELECT *, ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(lng,lat))AS distance FROM ns_parking_lot WHERE (ST_Distance_Sphere(:longitude, :latitude), POINT(lng, lat)) < :distanceLevel)AND((weekend_begin_time > :now_time)OR(:now_time > weekend_end_time))" ,nativeQuery = true)
     List<NsParkingLot> findByRadiusWeekendClose(@Param("longitude")BigDecimal longitude, @Param("latitude") BigDecimal latitude, @Param("distanceLevel") int distanceLevel , @Param("now_time") int now_time);
 
 }

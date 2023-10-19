@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Getter // 클래스 내 모든 필드의 Getter 메소드 자동 생성
 @NoArgsConstructor //Lombok 포함 기능 -> 기본 생성자를 자동으로 생성해준다.
-@Table(name = "NS_parking_lot")
+@Table(name = "ns_parking_lot")
 @Entity //테이블과 연결될 클래스임을 뜻한다.
 public class NsParkingLot {
 
@@ -35,6 +35,12 @@ public class NsParkingLot {
 
     @Column(name="rates")
     private Integer rates;
+
+    private Integer time_rate;
+
+    private Integer add_rates;
+
+    private Integer add_time_rate;
 
     private Integer capacity;
 }

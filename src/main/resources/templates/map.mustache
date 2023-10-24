@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Title</title>
+    <!-- jquery 사용 -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+        .wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+        .wrap * {padding: 0;margin: 0;}
+        .wrap .info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+        .wrap .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+        .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
+        .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
+        .info .close:hover {cursor: pointer;}
+        .info .body {position: relative;overflow: hidden;}
+        .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
+        .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+        .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
+        .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
+        .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+        .info .link {color: #5085BB;}
+        .ResponsiveBackground{
+          height: 100vh;
+          width: 100vw;
+          max-width: 1024px;
+          margin: auto auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: center;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+        .map{
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .current-location{
+            position: absolute;
+            margin-bottom: 10vh;
+            margin-left: 40vw;
+            width: 70px;
+            height: 70px;
+            z-index: 1;
+        }
+        .search{
+            margin-top: 8vh;
+            justify-content: center;
+            display:flex;
+            flex-direction: row;
+            width: 80%;
+            height: 4%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            z-index: 2;
+         }
+        .search > input {
+            width: inherit;
+            border-radius: 10px;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+        .search > button {
+            margin-left: 2vw;
+            border-radius: 10px;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+        .quick1{
+            position: relative;
+            margin-top: 5vh;
+            width: 50px;
+            z-index: 2;
+            border-color: transparent;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+        }
+         .quick2{
+            position: relative;
+            margin-top: 5vh;
+            width: 50px;
+            z-index: 2;
+            border-color: transparent;
+            box-shadow: 0px 2.98256px 7.4564px 2.98256px rgba(0, 0, 0, 0.1);
+        }
+
+        .desc{
+            margin-left : 8px !important;
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=010359d956a2e66b66db8df0ccd958d1&libraries=services,clusterer"></script>
+        <div class="ResponsiveBackground">
+            <div class="map" id="map" >
+                <div class="search">
+                    <input type="text" id="search_text">
+                    <button type="button" id="search_btn" onclick="search_ajax();">검색</button>
+                    <button class="quick1" id="search1_click">노외</button>
+                    <button class="quick2" id="search2_click">노상</button>
+                </div>
+            </div>
+            <button class="current-location" type="button" id="currentLocation">현재 위치</button>
+        </div>
+
+    <script>
+        var open_positions_nw=[];
+        var close_positions_nw=[];
+        var open_positions_ns=[];
+        var close_positions_ns=[];
+    </script>
+    {{#Open_nw}}
+        <script>
+            <!--            rates capacity 널값때문에 뺌-->
+                        var open_position = {
+                            latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}
+            }
+            open_positions_nw.push(open_position);
+        </script>
+    {{/Open_nw}}
+    {{#Close_nw}}
+        <script>
+            <!--            rates capacity 널값때문에 뺌-->
+            var close_position = {
+                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}
+            }
+            close_positions_nw.push(close_position);
+        </script>
+    {{/Close_nw}}
+    {{#Open_ns}}
+        <script>
+            var open_position = {
+                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}, rates :{{rates}}, capacity: {{capacity}} , timeRate : {{time_rate}}, addRates : {{add_rates}}, addTimeRate : {{add_time_rate}}
+            }
+            open_positions_ns.push(open_position);
+        </script>
+    {{/Open_ns}}
+    {{#Close_ns}}
+        <script>
+            var close_position = {
+                latlng: new kakao.maps.LatLng( {{lat}}, {{lng}} ), addr: "{{addr}}", parking_name: "{{parking_name}}", weekday_begin_time: {{weekdayBeginTime}}, weekday_end_time: {{weekdayEndTime}}, rates :{{rates}}, capacity: {{capacity}} , timeRate : {{time_rate}}, addRates : {{add_rates}}, addTimeRate : {{add_time_rate}}
+            }
+            close_positions_ns.push(close_position);
+        </script>
+    {{/Close_ns}}
+    </body>
+    </html>
+
+    <script>
+        var current_check_click =0;
+        var circle;
+        var check_click_ns =0;
+        var check_click_nw =0;
+
+        var container = document.getElementById('map');
+        var options = {
+            center: new kakao.maps.LatLng(37.5666612, 126.9783785),
+            level: 8
+        };
+
+        var map = new kakao.maps.Map(container, options);
+        var markers = [];
+        //ajax에 선택한 주차장의 주소와 주차장명을 보내기위한 배열
+
+
+        // 노외
+        $('#search1_click').click(function(){
+            if(check_click_nw ==0){
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+                //오버레이창과 함께 open_position_nw 마커 생성하기
+                for(let i=0; i < open_positions_nw.length; i++){
+                    var data = open_positions_nw[i];
+                    displayMarker(data);
+                }
+
+                //오버레이창과 함께 open_position_nw 마커 생성하기
+                for(let i=0; i < close_positions_nw.length; i++){
+                    var data = close_positions_nw[i];
+                    displayMarker(data);
+                }
+                check_click_nw =1;
+            }else{
+               delete_marker();
+               check_click_nw =0;
+            }
+        })
+
+        //노상
+        $('#search2_click').click(function(){
+            //alert(check_click_ns)
+
+            if(check_click_ns ==0){
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+                //오버레이창과 함께 open_position_ns 마커 생성하기
+                for(let i=0; i < open_positions_ns.length; i++){
+                    var data = open_positions_ns[i];
+                    displayMarker(data);
+                }
+
+                //오버레이창과 함께 open_position_ns 마커 생성하기
+                for(let i=0; i < close_positions_ns.length; i++){
+                    var data = close_positions_ns[i];
+                    displayMarker(data);
+                }
+
+                check_click_ns =1;
+            }else{
+               delete_marker();
+               check_click_ns =0;
+            }
+        })
+
+        let keyName;
+        let keyAddr;
+
+        let ajaxAddr;
+        let ajaxBeginTime;
+        let ajaxEndTime;
+        let ajaxRates;
+        let ajaxTimeRate;
+        let ajaxCapacity;
+        let ajaxAddRates;
+        let ajaxAddRateTime;
+
+        // 지도에 마커를 표시하는 함수입니다
+        function displayMarker(data) {
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: data.latlng
+            });
+            //생성한 마커를 배열에 담는다
+            markers.push(marker);
+
+            var overlay = new kakao.maps.CustomOverlay({
+                yAnchor: 3,
+                position: marker.getPosition()
+            });
+
+            var content = document.createElement('div');
+            content.classList.add("wrap")
+
+
+            var infoDiv = document.createElement('div');
+            infoDiv.classList.add("info");
+            content.appendChild(infoDiv);
+
+            //titleDiv -> infoDiv 안에 존재
+            var titleDiv = document.createElement("div");
+            titleDiv.classList.add("title");
+            titleDiv.innerHTML =  data.parking_name;
+            infoDiv.appendChild(titleDiv);
+
+            //closeBtn -> titleDiv 안에 존재
+            var closeBtn = document.createElement('div');
+            closeBtn.classList.add("close");
+            closeBtn.onclick = function () {
+                overlay.setMap(null);
+            };
+            titleDiv.appendChild(closeBtn);
+
+            //bodyDiv -> infoDiv 안에 존재
+            var bodyDiv = document.createElement("div");
+            bodyDiv.classList.add("body");
+            infoDiv.appendChild(bodyDiv);
+
+    <!--        //imgDiv -> bodyDiv 안에 존재-->
+    <!--        var imgDiv = document.createElement("div");-->
+    <!--        imgDiv.classList.add("img");-->
+    <!--        bodyDiv.appendChild(imgDiv);-->
+
+    <!--        //img -> imgDiv 안에 존재-->
+    <!--        var image = document.createElement("img");-->
+    <!--        image.setAttribute("src", "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png");-->
+    <!--        image.setAttribute("width", "73");-->
+    <!--        image.setAttribute("height", "70");-->
+    <!--        imgDiv.appendChild(image);-->
+
+
+            //descDiv -> bodyDiv 안에 존재
+            var descDiv = document.createElement("div");
+            descDiv.classList.add("desc");
+            bodyDiv.appendChild(descDiv);
+
+            //ellipsis... -> descDiv 안에 존재 : 내용 표시
+            var ellipsisAddr = document.createElement("div");
+            ellipsisAddr.classList.add("ellipsis");
+            ellipsisAddr.innerHTML = data.addr;
+            descDiv.appendChild(ellipsisAddr);
+
+            var ellipsisTime = document.createElement("div");
+            ellipsisTime.classList.add("ellipsis");
+            ellipsisTime.innerHTML = "영업시간 : " + data.weekday_begin_time + " ~ " + data.weekday_end_time ;
+            descDiv.appendChild(ellipsisTime);
+
+            var ellipsisRate = document.createElement("div");
+            ellipsisRate.classList.add("ellipsis");
+            ellipsisRate.innerHTML = "기본 요금: " + data.rates + " 원( " +data.timeRate + " 분) 추가( " + data.addRates + " 원 " + data.addTimeRate + " 분당)";
+            descDiv.appendChild(ellipsisRate);
+
+
+            var ellipsisCapacity = document.createElement("div");
+            ellipsisCapacity.classList.add("ellipsis");
+            ellipsisCapacity.innerHTML = "주차 공간 : 00대 가능( 총 " + data.capacity + " 대)";
+            descDiv.appendChild(ellipsisCapacity);
+
+
+            overlay.setContent(content);
+
+            kakao.maps.event.addListener(marker, 'click', function() {
+                overlay.setMap(map);
+                keyName = String(titleDiv.innerHTML.slice(0,-28));
+                keyAddr = String(ellipsisAddr.innerHTML);
+                ajaxAddr = keyAddr;
+                var capacity = String(ellipsisCapacity.innerHTML).split(" ");
+                ajaxCapacity = capacity[6];
+                var rate = String(ellipsisRate.innerHTML).split(" ");
+                ajaxRates = rate[2];
+                ajaxTimeRate = rate[4];
+                ajaxAddRates = rate[7];
+                ajaxAddTimeRate = rate[9];
+                var Time = String(ellipsisTime.innerHTML).split(" ");
+                ajaxBegintTime = Time[2];
+                ajaxEndTime = Time[4];
+                setInterval(parkingLotUpdate(), 1200000);
+            });
+        }
+
+        function parkingLotUpdate () {
+            $.ajax({
+                url: '../available/' ,
+                data: {
+                    keyName : keyName,
+                    keyAddr : keyAddr
+                },
+                dataType : 'json',
+                type: "POST" ,
+                success : function(curParking) {
+                    alert("백 반환");
+                    var txt = '';
+                    $('.desc').empty();
+                    txt += "<div class='ellipsis'>"+ajaxAddr+"</div>"
+                    txt += "<div class='ellipsis'>영업시간 : " +ajaxBegintTime+" ~ " +ajaxEndTime+"</div>"
+                    txt += "<div class='ellipsis'>기본 요금: " + ajaxRates + " 원( " + ajaxTimeRate + " 분) 추가( " + ajaxAddRates + " 원 " + ajaxAddTimeRate + " 분당)</div>"
+                    txt += "<div class='ellipsis'>주차 공간 : " + curParking +"대 가능(총 " + ajaxCapacity +"대)</div>"
+                    $('.desc').html(txt);
+
+                }
+            })
+        }
+
+        /////////////////////////////////////////////////////////
+    var input_text = document.getElementById("search_text");
+
+    function search_ajax(){
+<!--        alert(input_text.value);-->
+
+        $.ajax({
+            url : "search.action",
+            type : 'post',
+            data : {
+                search_text : input_text.value
+            },
+            success : function(data) {
+                for(var i=0;i<markers.length;i++){
+                    markers[i].setMap(null)
+                }
+
+                console.log("Open")
+                var Open_search_positions=[];
+                for(var i in data.Open){
+                    var search_position = {
+                        latlng : new kakao.maps.LatLng( data.Open[i].lat, data.Open[i].lng ), addr: "search_test", parking_name: data.Open[i].parking_name, weekday_begin_time: data.Open[i].weekdayBeginTime, weekday_end_time: data.Open[i].weekdayEndTime
+                    }
+                    Open_search_positions.push(search_position);
+                }
+                console.log(Open_search_positions)
+
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+                //오버레이창과 함께 search_position 마커 생성하기
+                for(let i=0; i < Open_search_positions.length; i++){
+                    var data = Open_search_positions[i];
+                    displayMarker(data);
+                }
+
+
+                console.log("Close")
+                var Close_search_positions=[];
+                for(var i in data.Close){
+                    var search_position = {
+                        latlng : new kakao.maps.LatLng( data.Open[i].lat, data.Open[i].lng ), addr: "search_test", parking_name: data.Open[i].parking_name, weekday_begin_time: data.Open[i].weekdayBeginTime, weekday_end_time: data.Open[i].weekdayEndTime
+                    }
+                    Close_search_positions.push(search_position);
+                }
+                console.log(Close_search_positions)
+
+                var close_imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                close_imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                close_imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                var close_markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+                //오버레이창과 함께 close_search_position 마커 생성하기
+                for(let i=0; i < Close_search_positions.length; i++){
+                    var data = Close_search_positions[i];
+                    displayMarker(data);
+                }
+
+             },
+            error : function() {
+                //alert("error");
+            }
+        });
+    }
+     ////////////////////////////////////////현재 위치///////////////////////////////////////////////
+
+     $('#currentLocation').click(function () {
+        // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+        if (navigator.geolocation) {
+            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude, // 위도
+                    lon = position.coords.longitude; // 경도
+
+                var locPosition = new kakao.maps.LatLng(lat, lon);
+                var loc_Position = {
+                    latlng : new kakao.maps.LatLng(lat, lon), addr:"현재위치"
+                }
+
+                //원 그릴때 원중심 좌표
+                var centerPosition = locPosition;
+                //alert(centerPosition);
+
+                 // 마커 좌표를 접속위치로 변경합니다
+                 map.setCenter(locPosition);
+                 //컨트롤러에 post 로 중심좌표 넘겨주기
+                 $.ajax({
+                    url : "current.do",
+                    type : "POST",
+                    data : {
+                        lat1 : lat,
+                        lng1 : lon
+                    },
+
+                    success : function(data) {
+                        for(var i=0;i<markers.length;i++){
+                            markers[i].setMap(null)
+                        }
+                        if(current_check_click ==0){
+                            var Open_search_positions=[];
+                            for(var i in data.Open){
+                                var search_position = {
+                                    latlng : new kakao.maps.LatLng( data.Open[i].lat, data.Open[i].lng ), addr: "search_test", parking_name: data.Open[i].parking_name, weekday_begin_time: data.Open[i].weekdayBeginTime, weekday_end_time: data.Open[i].weekdayEndTime
+                                }
+                                Open_search_positions.push(search_position);
+                                Open_search_positions.push(loc_Position);
+                            }
+                            console.log(Open_search_positions)
+
+                            var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                            imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                            imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+                            //오버레이창과 함께 search_position 마커 생성하기
+                            for(let i=0; i < Open_search_positions.length; i++){
+                                var data = Open_search_positions[i];
+                                displayMarker(data);
+                            }
+
+                            console.log("Close")
+                            var Close_search_positions=[];
+                            for(var i in data.Close){
+                                var search_position = {
+                                    latlng : new kakao.maps.LatLng( data.Open[i].lat, data.Open[i].lng ), addr: "search_test", parking_name: data.Open[i].parking_name, weekday_begin_time: data.Open[i].weekdayBeginTime, weekday_end_time: data.Open[i].weekdayEndTime
+                                }
+                                Close_search_positions.push(search_position);
+                            }
+                            console.log(Close_search_positions)
+
+                            var close_imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다
+                            close_imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+                            close_imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+                            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                            var close_markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+                            //오버레이창과 함께 close_search_position 마커 생성하기
+                            for(let i=0; i < Close_search_positions.length; i++){
+                                var data = Close_search_positions[i];
+                                displayMarker(data);
+                            }
+
+                            //영역 생성 center0920
+                            circle = new kakao.maps.Circle({
+                                center : centerPosition,  // 원의 중심좌표 입니다
+                                radius: 3000, // 미터 단위의 원의 반지름입니다
+                                strokeWeight: 2, // 선의 두께입니다
+                                strokeColor: '#75B8FA', // 선의 색깔입니다
+                                strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+                                strokeStyle: 'solid', // 선의 스타일 입니다
+                                fillColor: '#32BEBE', // 채우기 색깔입니다
+                                fillOpacity: 0.3  // 채우기 불투명도 입니다
+                            });
+                            circle.setMap(map);
+                            current_check_click =1;
+                        }else{
+                            for(var i=0;i<markers.length;i++){
+                                markers[i].setMap(null)
+                            }
+                            circle.setMap(null);
+                            current_check_click =0;
+                        }
+                    },
+                    error : function() {
+                        //alert("error");
+                    }
+                 });
+            });
+        } else {
+            // HTML5의 GeoLocation을 사용할 수 없을때
+        }
+     });
+
+
+    //enter 누르면 인식
+    input_text.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("search_btn").click();
+        }
+    });
+
+    //기존 마커 삭제 함수
+    function delete_marker(){
+        for(var i=0;i<markers.length;i++){
+            markers[i].setMap(null)
+        }
+    }
+</script>
+

@@ -1,8 +1,11 @@
 package org.teamM.parkingLot.NwParkingLot;
+import org.teamM.Watch.*;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -27,22 +30,7 @@ public class NwParkingLotService {
      */
 //    @Autowired
     private final NwParkingLotRepository NwParkingLotRepository;
-
-    //요일 구하는 함수 월:1 ~ 일:7
-    public Integer getDate(){
-        // 1. LocalDate 생성
-        LocalDate date = LocalDate.now();
-
-        // 2. DayOfWeek 객체 구하기
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-
-        // 3. 숫자 요일 구하기
-        int dayOfWeekNumber = dayOfWeek.getValue();
-
-        return dayOfWeekNumber;
-    }
-
-
+    public static Watch watch = new Watch();
 
 
     /*
@@ -52,7 +40,7 @@ public class NwParkingLotService {
 
     @Transactional(readOnly = true)
     public List<NwParkingLot> findOpenNwParkingLot(int time1, int time2) {
-        int date = getDate();
+        int date = watch.getDate();
         if(date == 6 || date == 7) {
             System.out.println("Open 주말 작동");
             return NwParkingLotRepository.findByWeekendBeginTimeLessThanAndWeekendEndTimeGreaterThan(time1, time2);
@@ -65,7 +53,7 @@ public class NwParkingLotService {
 
     @Transactional(readOnly = true)
     public List<NwParkingLot> findCloseNwParkingLot(int time1, int time2){
-        int date = getDate();
+        int date = watch.getDate();
         if(date == 6 || date == 7){
             System.out.println("Close 주말 작동");
             return NwParkingLotRepository.findByWeekendBeginTimeGreaterThanOrWeekendEndTimeLessThan(time1, time2);
@@ -74,6 +62,32 @@ public class NwParkingLotService {
         System.out.println("Close 주중 List 크기" + test.size());
         System.out.println("Close 주중 작동");
         return NwParkingLotRepository.findByWeekdayBeginTimeGreaterThanOrWeekdayEndTimeLessThan(time1, time2);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<NwParkingLot> findRadiusOpenNwParkingLot(BigDecimal hx, BigDecimal hy) {
+        int date = watch.getDate();
+        if(date == 6 || date == 7) {
+            System.out.println("Open 주말 작동");
+            return NwParkingLotRepository.findByRadiusWeekendOpen(hx,hy,3000, watch.getTime());
+        }
+        List<NwParkingLot> test = NwParkingLotRepository.findByRadiusWeekdayOpen(hx,hy,3000, watch.getTime());
+        System.out.println("Open 주중 List 크기" + test.size());
+        System.out.println("Open 주중 작동");
+        return NwParkingLotRepository.findByRadiusWeekdayOpen(hx,hy,3000, watch.getTime());
+    }
+
+    public List<NwParkingLot> findRadiusCloseNwParkingLot(BigDecimal hx, BigDecimal hy) {
+        int date = watch.getDate();
+        if(date == 6 || date == 7) {
+            System.out.println("Close 주말 작동");
+            return NwParkingLotRepository.findByRadiusWeekendClose(hx,hy,3000, watch.getTime());
+        }
+        List<NwParkingLot> test = NwParkingLotRepository.findByRadiusWeekdayClose(hx,hy,3000, watch.getTime());
+        System.out.println("Close 주중 List 크기" + test.size());
+        System.out.println("Close 주중 작동");
+        return NwParkingLotRepository.findByRadiusWeekdayClose(hx,hy,3000, watch.getTime());
     }
 
 }

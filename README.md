@@ -23,23 +23,11 @@
 
 ### 2) 배포 URL
 * [Helpark 링크](http://3.34.114.142:8080/)
-* [Helpark 웹뷰 저장소 링크](https://github.com/MeanOfRedStone/helparkWebview)
-
 <br/>
-
-### 3) 프로젝트 블로그
-* [블로그 주소](https://www.notion.so/spring-project-8fe4731d22f244f4a01dc02729e33338)
-* [개발 일지](https://www.notion.so/d19aa2c0c05443c499a1e7a5372648b0?v=01075cb1917546e5bc90d51e4cf76307)
-  (주 : 석의 - 본인 | 예원, 태성 - 팀원)
-  
-<br/><br/><br/>
-
 
 
 ## 2. 프로젝트 설명
 ### 1) 개요
-
-* 진행 기간: 2023.8.24 ~ (진행중)
 * 개발 인원 : 3명
 * 개발 환경
    
